@@ -1,0 +1,38 @@
+.container {
+    text-align: center;
+  }
+  
+  .header {
+    background-color: #004a99;
+    color: white;
+    padding: 10px 0;
+  }
+  
+  .navigation ul {
+    list-style: none;
+    padding: 0;
+  }
+  
+  .navigation li {
+    display: inline;
+    margin: 0 10px;
+  }
+  
+  .navigation a {
+    color: white;
+    text-decoration: none;
+  }
+  
+  .main-content {
+    margin: 20px 0;
+  }
+  
+  .footer {
+    background-color: #222;
+    color: white;
+    padding: 10px 0;
+    position: fixed;
+    bottom: 0;
+    width: 100%;
+  }
+  

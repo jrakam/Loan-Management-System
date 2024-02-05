@@ -37,6 +37,9 @@
   
   <button (click)="onUpload()" [disabled]="overallProgress > 0 && overallProgress < 100">Upload</button>
 </div> -->
+<header class="header">
+  <app-header></app-header>
+</header>
 <div class="upload-container">
   <h2>Upload Your Documents For Verification</h2>
   
@@ -64,5 +67,5 @@
   </div>
   
   <button (click)="onUpload()" [disabled]="!allFilesChosen() || (overallProgress > 0 && overallProgress < 100)">Upload</button>
-
+<app-footer></app-footer>
 </div>

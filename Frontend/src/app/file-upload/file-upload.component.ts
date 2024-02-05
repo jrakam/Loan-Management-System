@@ -1,5 +1,9 @@
 import { Component, ChangeDetectorRef } from '@angular/core';
 import { HttpClient, HttpErrorResponse, HttpEventType } from '@angular/common/http';
+import { HeaderComponent } from '../header/header.component';
+import { FooterComponent } from '../footer/footer.component';
+import { CommonModule } from '@angular/common';
+import { FormsModule } from '@angular/forms';
 
 interface FileUpload {
   file: File | null;
@@ -13,7 +17,10 @@ interface FileUpload {
 @Component({
   selector: 'app-file-upload',
   templateUrl: './file-upload.component.html',
-  styleUrls: ['./file-upload.component.css']
+  styleUrls: ['./file-upload.component.css'],
+  standalone:true,
+  imports:[HeaderComponent,FooterComponent,CommonModule,FormsModule]
+  
 })
 export class FileUploadComponent {
   fileUploads: FileUpload[] = Array.from({ length: 5 }, () => ({

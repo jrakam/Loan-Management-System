@@ -9,13 +9,15 @@ import { AppComponent } from './app.component';
 import { LoginComponent } from './login/login.component';
 import { HomeComponent } from './home/home.component'; // Ensure this component is imported
 import { routes } from './app-routing.module';
-import { FileUploadComponent } from './file-upload/file-upload.component'; // Ensure the routes are correctly defined
+import { FileUploadComponent } from './file-upload/file-upload.component';
+import { FooterComponent } from './footer/footer.component';
+import { HeaderComponent } from './header/header.component'; // Ensure the routes are correctly defined
 
 
 @NgModule({
   declarations: [
     AppComponent,
-    FileUploadComponent,
+    
    
     // ... any other components this module uses
   ],

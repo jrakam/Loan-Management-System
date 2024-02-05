@@ -1,15 +1,15 @@
-import { Component } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
-
+import { HeaderComponent } from '../header/header.component';
+import { FooterComponent } from '../footer/footer.component';
 @Component({
   selector: 'app-home',
-  standalone: true,
-  imports: [],
   templateUrl: './home.component.html',
-  styleUrls: ['./home.component.css'] // Changed from 'styleUrl' to 'styleUrls' and wrapped the path in an array
+  styleUrls: ['./home.component.css'],
+  standalone:true,
+  imports:[HeaderComponent, FooterComponent]
 })
 export class HomeComponent {
-
   constructor(private router: Router) {}
 
   onLoginClick() {
@@ -19,6 +19,6 @@ export class HomeComponent {
   onSignupClick() {
     this.router.navigate(['/signup']);
   }
+  
+
 }
-
-

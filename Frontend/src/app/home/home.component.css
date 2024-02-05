@@ -1,40 +1,56 @@
 .container {
-    text-align: center;
-  }
-  
-  .header {
-    background-color: #004a99;
-    color: white;
-    padding: 10px 0;
-  }
-  
-  .navigation ul {
-    list-style: none;
-    padding: 0;
-  }
-  
-  .navigation li {
-    display: inline;
-    margin: 0 10px;
-  }
-  
-  .navigation a {
-    color: white;
-    text-decoration: none;
-  }
-  
-  .main-content {
-    margin: 20px 0;
-  }
-  
-  .footer {
-    background-color: #222;
-    color: white;
-    padding: 10px 0;
-    position: fixed;
-    bottom: 0;
-    width: 100%;
-  }
-  
-  
-  
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+}
+
+.header {
+  background-color: #005792; /* A deep blue shade for the header */
+}
+
+.intro h2 {
+  text-align: center;
+  padding: 20px;
+  margin: 0;
+  background-color: #f8f8f8; /* A light grey background for the intro section */
+  color: #333; /* Dark grey text for contrast */
+}
+
+.main-content {
+  flex: 1; /* Allows the main content to grow and take up remaining space */
+  text-align: center; /* Center-aligns the content */
+  padding: 40px 20px;
+}
+
+.main-content h1 {
+  margin-bottom: 30px; /* Adds some space below the main title */
+  color: #005792; /* Using the same color as the header for consistency */
+}
+
+.navigation {
+  margin-bottom: 20px; /* Space below the navigation */
+}
+
+.navigation button {
+  background-color: #007CC7; /* A slightly lighter blue for buttons */
+  color: white;
+  border: none;
+  padding: 10px 20px;
+  margin: 0 10px;
+  border-radius: 5px;
+  cursor: pointer;
+  font-size: 1rem;
+  transition: background-color 0.2s ease-in-out;
+}
+
+.navigation button:hover {
+  background-color: #006bb3; /* Darken button color on hover for interaction feedback */
+}
+
+.navigation button:focus {
+  outline: none; /* Removes the default focus outline */
+  box-shadow: 0 0 0 2px rgba(0, 123, 255, 0.5); /* Adds a custom focus indicator */
+}
+
+
+

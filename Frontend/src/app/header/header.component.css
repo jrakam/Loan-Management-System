@@ -1,0 +1,64 @@
+.header {
+    background-color: #005792; /* Adjust the color to your preference */
+    color: white;
+    padding: 10px 20px;
+  }
+  
+  .navbar {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+  
+  .navbar-brand {
+    display: flex;
+    align-items: center;
+    gap: 15px; /* Space between logo and brand name */
+  }
+  
+  .navbar-brand img {
+    height: 50px; /* Adjust the size to fit your logo */
+  }
+  
+  .navbar-brand .bank-name {
+    font-size: 1.5rem;
+    font-weight: bold;
+  }
+  
+  .navbar-menu {
+    display: flex;
+    gap: 20px; /* Space between navigation items */
+  }
+  
+  .navbar-item {
+    text-decoration: none;
+    color: white;
+    padding: 10px 15px;
+    transition: background-color 0.3s ease;
+  }
+  
+  .navbar-item:hover,
+  .navbar-item.active {
+    background-color: #007CC7; /* Slightly lighter blue for hover/active state */
+  }
+  
+  .header-features {
+     /* Darker blue for the features bar */
+    padding: 5px 20px;
+    text-align: center;
+    font-size: 1rem;
+  }
+  
+  /* Media query for responsive design */
+  @media (max-width: 768px) {
+    .navbar-menu {
+      flex-direction: column;
+      align-items: flex-start;
+    }
+    
+    .navbar-brand, .navbar-menu {
+      width: 100%;
+      justify-content: space-between;
+    }
+  }
+  

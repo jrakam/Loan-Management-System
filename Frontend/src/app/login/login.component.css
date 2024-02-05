@@ -38,3 +38,8 @@
     opacity: 0.8;
   }
   
+  .error-message {
+    color: red;
+    margin-top: 10px;
+  }
+  

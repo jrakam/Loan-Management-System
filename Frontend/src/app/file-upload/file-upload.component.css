@@ -1,0 +1,235 @@
+.upload-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    margin-top: 20px;
+  }
+  
+  .upload-container h2 {
+    margin-bottom: 20px;
+  }
+  
+  .upload-container input[type="file"] {
+    margin-bottom: 10px;
+  }
+  
+  .upload-container button {
+    cursor: pointer;
+    background-color: #004a99;
+    color: white;
+    padding: 10px 15px;
+    border: none;
+    border-radius: 5px;
+    transition: 0.3s;
+  }
+  
+  .upload-container button:disabled {
+    background-color: #cccccc;
+    cursor: not-allowed;
+  }
+  
+  .upload-container p {
+    margin-top: 20px;
+  }
+  .file-input-container {
+    display: flex;
+    align-items: center;
+    gap: 10px; /* creates space between the elements */
+  }
+  .file-name {
+        font-size: 0.9rem; /* Set the size of the font */
+        font-weight: bold; /* Make the font bold */
+        color: #555; /* Set the color of the font */
+        margin-right: 10px; /* Add some space to the right of the file name */
+        white-space: nowrap; /* Prevent the text from wrapping */
+        overflow: hidden; /* Hide overflow */
+        text-overflow: ellipsis; /* Add an ellipsis if the text is too long */
+        max-width: 150px; /* Set a max-width for the file name */
+      }
+  .file-upload-success {
+    color: green;
+    margin-left: 10px; /* adjust as needed */
+  }
+  .error-message {
+    color: red;
+    margin-left: 10px; /* adjust as needed */
+  }
+  .success-message {
+    color: green;
+    margin-left: 10px; /* Adjust as needed */
+  }
+  .file-upload-row {
+    display: flex;
+    align-items: center;
+    gap: 10px; /* This adds space between all children of the .file-upload-row */
+  }
+  
+  .file-upload-row .file-input-wrapper {
+    margin-left: 20px; /* Adjust this value as needed for your layout */
+  }
+  .progress-bar-container {
+    width: 100%; /* Full width of the container */
+    background-color: #e0e0e0; /* Light grey background */
+    border-radius: 4px; /* Optional: rounded corners */
+    margin-top: 10px; /* Space above the progress bar */
+  }
+  
+  .progress-bar {
+    height: 20px; /* Height of the progress bar */
+    background-color:  #004a99; /* Green color for progress */
+    border-radius: 4px; /* Optional: rounded corners */
+    width: 0; /* Initial width of the progress bar */
+  }
+
+  .upload-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    margin-top: 20px;
+  }
+  
+  .upload-container h2 {
+    margin-bottom: 20px;
+  }
+  
+  .file-upload-row {
+    display: flex;
+    align-items: center;
+    gap: 10px; /* Adjust spacing between elements */
+    margin-bottom: 10px; /* Space below each upload row */
+  }
+  
+  .file-upload-row select {
+    flex: 1;
+  }
+  
+  .file-upload-row input[type="file"] {
+    flex: 1;
+  }
+  
+  .error-message {
+    color: red;
+    margin-left: 10px;
+  }
+  
+  .progress-bar-container {
+    width: 100%;
+    background-color: #e0e0e0;
+    border-radius: 4px;
+    margin-top: 10px;
+  }
+  
+  .progress-bar {
+    height: 20px;
+    background-color:  #004a99;
+    border-radius: 4px;
+    width: 0;
+  }
+  
+  .upload-container button {
+    cursor: pointer;
+    background-color: #004a99;
+    color: white;
+    padding: 10px 15px;
+    border: none;
+    border-radius: 5px;
+    transition: 0.3s;
+  }
+  
+  .upload-container button:disabled {
+    background-color: #cccccc;
+    cursor: not-allowed;
+  }
+  
+  .upload-container p {
+    margin-top: 20px;
+  }
+  .progress-bar {
+    background-color: blue;
+    height: 20px;
+    min-width: 2%;
+    color: white;
+    text-align: center;
+  }
+  .progress-bar {
+    height: 20px;
+    background-color: green;
+    text-align: center;
+    color: white;
+  }
+  
+  
+     /* file-upload.component.css */
+.file-uploader {
+  /* Style for the container of the file uploader */
+  max-width: 600px;
+  margin: 0 auto;
+  padding: 20px;
+  border: 1px solid #ccc;
+  border-radius: 5px;
+}
+
+.file-upload-row {
+  /* Style for each upload row */
+  margin-bottom: 15px;
+}
+
+.file-upload-row .progress-container {
+  /* Container for the progress bar */
+  position: relative;
+  height: 20px;
+  background-color: #f0f0f0;
+  border-radius: 10px;
+  overflow: hidden;
+}
+
+.file-upload-row .progress-bar {
+  /* Style for the progress bar itself */
+  background-color: #004a99; /* Green color for the progress */
+  height: 100%;
+  border-radius: 10px;
+  transition: width 0.4s ease;
+}
+
+.file-upload-row .progress-text {
+  /* Text inside the progress bar */
+  position: absolute;
+  width: 100%;
+  text-align: center;
+  line-height: 20px;
+  font-size: 12px;
+  color: white;
+}
+
+.overall-progress {
+  /* Overall progress bar at the bottom */
+  margin-top: 30px;
+  padding: 5px;
+  background-color: #f8f8f8;
+  border: 1px solid #ddd;
+  border-radius: 10px;
+}
+
+.overall-progress .progress-bar {
+  /* Style for the overall progress bar */
+  background-color: #2196f3; /* Blue color for overall progress */
+  height: 20px;
+  border-radius: 10px;
+  transition: width 0.4s ease;
+}
+
+.success-message, .error-message {
+  /* Messages for success or error during upload */
+  display: block;
+  margin-top: 5px;
+}
+
+.success-message {
+  color: #4caf50; /* Green color for success */
+}
+
+.error-message {
+  color: #f44336; /* Red color for errors */
+}
+
+/* Add additional styling for buttons, file input, etc., as needed */

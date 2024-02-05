@@ -3,15 +3,19 @@ import { FormsModule } from '@angular/forms'; // Make sure FormsModule is import
 import { NgModule } from '@angular/core';
 import { RouterModule } from '@angular/router';
 import { HttpClientModule } from '@angular/common/http';
+import { CommonModule } from '@angular/common';
 
 import { AppComponent } from './app.component';
 import { LoginComponent } from './login/login.component';
 import { HomeComponent } from './home/home.component'; // Ensure this component is imported
-import { routes } from './app-routing.module'; // Ensure the routes are correctly defined
+import { routes } from './app-routing.module';
+import { FileUploadComponent } from './file-upload/file-upload.component'; // Ensure the routes are correctly defined
+
 
 @NgModule({
   declarations: [
     AppComponent,
+    FileUploadComponent,
    
     // ... any other components this module uses
   ],
@@ -20,6 +24,7 @@ import { routes } from './app-routing.module'; // Ensure the routes are correctl
     FormsModule,
     HttpClientModule,
     RouterModule.forRoot(routes, { useHash: true }), 
+    CommonModule
     // ... other necessary imports
   ],
   providers: [],

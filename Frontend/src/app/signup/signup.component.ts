@@ -1,16 +1,13 @@
-import { Component } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { FormsModule } from '@angular/forms';
-
 
 @Component({
   selector: 'app-signup',
   templateUrl: './signup.component.html',
   styleUrls: ['./signup.component.css'],
-  standalone: true,
-  imports: [FormsModule]
 })
 export class SignupComponent {
-  // Add properties for form data
+
   username: string = '';
   email: string = '';
   password: string = '';

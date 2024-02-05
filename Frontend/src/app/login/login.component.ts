@@ -1,16 +1,13 @@
-import { Component } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
-import { FormsModule } from '@angular/forms';
-import { HttpClientModule } from '@angular/common/http';
 
 @Component({
   selector: 'app-login',
   templateUrl: './login.component.html',
-  styleUrls: ['./login.component.css'],
-  standalone: true,
-  imports: [FormsModule, HttpClientModule]
+  styleUrls: ['./login.component.css']
 })
 export class LoginComponent {
+
   username: string = '';
   password: string = '';
   apiUrl: string = 'http://localhost:8080/api/login'; // URL of your Spring Boot backend
@@ -33,4 +30,5 @@ export class LoginComponent {
       }
     );
   }
+
 }

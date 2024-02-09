@@ -6,6 +6,7 @@ import { Router } from '@angular/router'; // Import Router
 import { CommonModule } from '@angular/common';
 import { HeaderComponent } from '../header/header.component';
 import { FooterComponent } from '../footer/footer.component';
+import { AuthService } from '../auth.service';
 
 
 @Component({
@@ -21,9 +22,10 @@ export class LoginComponent {
   errorMessage: string ='';
   apiUrl: string = 'http://localhost:8080/api/login'; // URL of your Spring Boot backend
 
-  constructor(private http: HttpClient, private router: Router) { } // Inject Router in the constructor
+  constructor(private http: HttpClient, private router: Router, private authService:AuthService) { } // Inject Router in the constructor
 
   onSubmit() {
+    this.authService.setCredentials(this.username, this.password);
     const headers = new HttpHeaders({
       'Authorization': 'Basic ' + btoa(this.username + ':' + this.password)
     });
@@ -31,6 +33,7 @@ export class LoginComponent {
     this.http.get(this.apiUrl, { headers, responseType: 'text', withCredentials: true }).subscribe(
       response => {
         console.log('Success:', response);
+        this.authService.setCredentials(this.username, this.password);
         // Handle successful authentication here
         this.router.navigate(['/file-upload']); // Navigate to file upload page
       },

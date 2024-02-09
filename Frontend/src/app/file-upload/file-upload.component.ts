@@ -4,6 +4,10 @@ import { HeaderComponent } from '../header/header.component';
 import { FooterComponent } from '../footer/footer.component';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
+import { Observable } from 'rxjs';
+import { FileUploadService} from '../fileUploadService';
+import { AuthService } from '../auth.service';
+import { fail } from 'assert';
 
 interface FileUpload {
   file: File | null;
@@ -11,6 +15,9 @@ interface FileUpload {
   error?: string;
   progress?: number;
   status?: 'pending' | 'uploaded' | 'error';
+  
+
+  
   
 }
 
@@ -23,13 +30,17 @@ interface FileUpload {
   
 })
 export class FileUploadComponent {
+  
   fileUploads: FileUpload[] = Array.from({ length: 5 }, () => ({
     file: null, type: '', error: '', progress: 0, status: 'pending'
   }));
   uploadResponse: string = '';
   overallProgress: number = 0;
+  showSuccessMessage: boolean=false;
+  baseUrl = 'http://localhost:8080/api'; // Adjust according to your backend API's base URL
+  
 
-  constructor(private http: HttpClient, private cdr: ChangeDetectorRef) {}
+  constructor(private http: HttpClient, private cdr: ChangeDetectorRef, private fileUploadService: FileUploadService,private authService: AuthService) {}
 
   onFileSelected(event: Event, index: number) {
     const element = event.currentTarget as HTMLInputElement;
@@ -64,45 +75,8 @@ export class FileUploadComponent {
   }
 
 
-  // onUpload() {
-  //   const totalFiles = this.fileUploads.filter(fu => fu.file && fu.type).length;
-  //   this.overallProgress = 0; // Reset overall progress at the start of the upload process
-  
-  //   this.fileUploads.forEach((fileUpload, index) => {
-  //     if (fileUpload.file && fileUpload.type) {
-  //       const formData = new FormData();
-  //       formData.append('file', fileUpload.file);
-  //       formData.append('type', fileUpload.type);
-  
-  //       this.http.post('your-upload-url', formData, {
-  //         reportProgress: true,
-  //         observe: 'events'
-  //       }).subscribe(event => {
-  //         if (event.type === HttpEventType.UploadProgress && event.total) {
-  //           const progress = Math.round(100 * event.loaded / event.total);
-  //           this.fileUploads[index].progress = progress; // Now 'progress' is correctly defined
-  //           this.calculateOverallProgress();
-  //         } else if (event.type === HttpEventType.Response) {
-  //           // File upload success
-  //           this.fileUploads[index].status = 'success';
-  //           this.fileUploads[index].progress = 100; // Ensure progress is set to 100% on success
-  //           this.calculateOverallProgress();
-  //         }
-  //       }, (error: HttpErrorResponse) => {
-  //         // File upload error
-  //         this.fileUploads[index].status = 'error';
-  //         this.fileUploads[index].error = `File ${index + 1} upload failed: ${error.message}`;
-  //         this.calculateOverallProgress();
-  //         this.cdr.detectChanges();
-  //       });
-  //     } else {
-  //       fileUpload.error = 'Please select a file and type for upload.';
-  //       this.cdr.detectChanges();
-  //     }
-  //   });
-  // }
-
   onUpload() {
+    this.showSuccessMessage = false;
   this.fileUploads.forEach((fileUpload, index) => {
     if (fileUpload.file && fileUpload.type) {
       fileUpload.status = 'pending';
@@ -138,6 +112,57 @@ export class FileUploadComponent {
 allFilesChosen(): boolean {
   return this.fileUploads.every(fileUpload => fileUpload.file !== null);
 }
+uploadFiles(files: File[], customerId: number): Observable<any> {
+  const formData: FormData = new FormData();
+  
+  files.forEach(file => {
+      formData.append('files', file);
+  });
+
+  // Remove customerId if it's managed on the backend side
+  return this.http.post(`${this.baseUrl}/upload`, formData, {
+    reportProgress: true,
+    responseType: 'text'
+  });
+}
+
+
+// Assuming onSubmit is the method triggered when the form is submitted
+onSubmit() {
+
+  if (this.allFilesChosen()) {
+    if (!this.authService.getEncodedCredentials()) {
+      console.error("Authentication credentials not available. Please log in again.");
+      // Optionally redirect to login or show a message prompting re-login
+      return;
+    }
+    const filesToUpload = this.fileUploads.map(fu => fu.file).filter(file => file !== null);
+
+    filesToUpload.forEach(file => {
+      if (file) { // This check is to satisfy TypeScript's type checking
+        this.fileUploadService.uploadFile(file).subscribe(
+          (response: any) => {
+            console.log('Upload successful', response);
+            this.showSuccessMessage = true;
+            // Handle successful upload here, e.g., update UI or show a success message
+          },
+          (error: any) => {
+            console.error('Error during file upload:', error);
+            // Handle upload error here, e.g., show an error message
+          }
+        );
+      }
+    });
+  } else {
+    // Handle the case where not all files are chosen or some other validation fails
+    console.error('Please ensure all files are selected before submitting.');
+  }
+}
+displaySuccessMessage() {
+  console.log('All files submitted successfully.');
+  // Display success message to the user, e.g., using a toast or modal
+}
+
 
 
   

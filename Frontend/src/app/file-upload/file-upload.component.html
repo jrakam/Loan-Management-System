@@ -1,42 +1,4 @@
-<!-- 
-<div class="upload-container">
-  <h2>File Upload</h2>
-  
-  
-  <div *ngFor="let fileUpload of fileUploads; let i = index" class="file-upload-row">
-    <select [(ngModel)]="fileUploads[i].type" (ngModelChange)="onTypeSelected(fileUploads[i].type, i)">
-      <option value="">Select Type</option>
-      <option *ngFor="let type of getAvailableTypes(i)" [value]="type">{{ type }}</option>
-    </select>
-    <input type="file" (change)="onFileSelected($event, i)" accept=".doc,.docx,application/pdf">
-    <span *ngIf="fileUpload.error" class="error-message">{{ fileUpload.error }}</span>
-   
-    <div *ngIf="fileUpload.progress && fileUpload.progress > 0" class="progress">
 
-     
-
-      <div class="progress-bar" role="progressbar"
-           [style.width]="fileUpload.progress + '%'"
-           [attr.aria-valuenow]="fileUpload.progress"
-           aria-valuemin="0" aria-valuemax="100">
-        {{ fileUpload.progress }}%
-      </div>
-    </div>
-    <span *ngIf="fileUpload.status === 'success'" class="success-message">Success</span>
-  </div>
-  
-
-  <div *ngIf="overallProgress > 0" class="progress overall-progress">
-    <div class="progress-bar" role="progressbar"
-         [style.width]="overallProgress + '%'"
-         [attr.aria-valuenow]="overallProgress"
-         aria-valuemin="0" aria-valuemax="100">
-      Overall Progress: {{ overallProgress | number: '1.0-2' }}%
-    </div>
-  </div>
-  
-  <button (click)="onUpload()" [disabled]="overallProgress > 0 && overallProgress < 100">Upload</button>
-</div> -->
 <header class="header">
   <app-header></app-header>
 </header>
@@ -59,13 +21,21 @@
     </div>
     <span *ngIf="fileUpload.status === 'uploaded'" class="file-upload-success">Uploaded</span>
   </div>
-  
+
   <div *ngIf="overallProgress > 0" class="progress-bar-container overall-progress">
     <div class="progress-bar" [style.width]="overallProgress + '%'" aria-valuemin="0" aria-valuemax="100">
       Uploading : {{ overallProgress | number: '1.0-2' }}%
     </div>
   </div>
-  
   <button (click)="onUpload()" [disabled]="!allFilesChosen() || (overallProgress > 0 && overallProgress < 100)">Upload</button>
+  
+  
+  <div *ngIf="overallProgress === 100" class="submit-button-container">
+    <button (click)="onSubmit()">Submit For Verification</button>
+  </div>
+  <div *ngIf="showSuccessMessage" class="success-message">
+    All files submitted successfully!
+  </div>
+  
 <app-footer></app-footer>
 </div>

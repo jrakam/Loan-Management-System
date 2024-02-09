@@ -20,5 +20,4 @@ export class HomeComponent {
     this.router.navigate(['/signup']);
   }
   
-
 }

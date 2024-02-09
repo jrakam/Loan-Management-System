@@ -210,6 +210,8 @@
   background-color: #f8f8f8;
   border: 1px solid #ddd;
   border-radius: 10px;
+  width: 30%;
+  margin-bottom: 20px;
 }
 
 .overall-progress .progress-bar {
@@ -218,6 +220,7 @@
   height: 20px;
   border-radius: 10px;
   transition: width 0.4s ease;
+  
 }
 
 .success-message, .error-message {
@@ -235,3 +238,8 @@
 }
 
 /* Add additional styling for buttons, file input, etc., as needed */
+
+.submit-button-container{
+  margin-top: 50px;
+
+}

@@ -41,7 +41,7 @@ objectclass: organizationalPerson
 objectclass: inetOrgPerson
 cn: Ben Alex
 sn: Alex
-uid: ben
+uid: jyoshna
 userPassword: $2a$10$c6bSeWPhg06xB1lvmaWNNe4NROmZiSpYhlocU/98HNr2MhIOiSt36
 
 

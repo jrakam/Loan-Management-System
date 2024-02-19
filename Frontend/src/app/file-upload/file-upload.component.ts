@@ -9,6 +9,10 @@ import { FileUploadService} from '../fileUploadService';
 import { AuthService } from '../auth.service';
 import { fail } from 'assert';
 
+import { forkJoin, of } from 'rxjs';
+import { catchError, tap } from 'rxjs/operators';
+
+
 interface FileUpload {
   file: File | null;
   type: string;
@@ -17,8 +21,6 @@ interface FileUpload {
   status?: 'pending' | 'uploaded' | 'error';
   
 
-  
-  
 }
 
 @Component({
@@ -42,12 +44,13 @@ export class FileUploadComponent {
 
   constructor(private http: HttpClient, private cdr: ChangeDetectorRef, private fileUploadService: FileUploadService,private authService: AuthService) {}
 
+
+
   onFileSelected(event: Event, index: number) {
     const element = event.currentTarget as HTMLInputElement;
     let fileList: FileList | null = element.files;
     if (fileList) {
-      const file: File = fileList[0];
-      this.fileUploads[index].file = file;
+      this.fileUploads[index].file = fileList[0];
       this.fileUploads[index].progress = 0;
       this.fileUploads[index].status = 'pending';
       this.fileUploads[index].error = '';
@@ -73,6 +76,7 @@ export class FileUploadComponent {
     const selectedTypes = this.fileUploads.map(fu => fu.type);
     return this.availableTypes.filter(type => !selectedTypes.includes(type) || this.fileUploads[index].type === type);
   }
+
 
 
   onUpload() {
@@ -128,36 +132,80 @@ uploadFiles(files: File[], customerId: number): Observable<any> {
 
 
 // Assuming onSubmit is the method triggered when the form is submitted
+// onSubmit() {
+  
+//   if (this.allFilesChosen()) {
+    
+//     this.fileUploads.forEach((fileUpload, index) => {
+//       if (fileUpload.file && fileUpload.type) {
+//         this.fileUploadService.uploadFile(fileUpload.file).subscribe({
+//           next: (event) => {
+//             if (event.type === HttpEventType.UploadProgress) {
+//               fileUpload.progress = Math.round(100 * event.loaded / event.total);
+//               console.log("success");
+//             } else if (event.type === HttpEventType.Response) {
+//               fileUpload.status = 'uploaded';
+//               this.showSuccessMessage = true;
+//               console.log("success");
+//             }
+//             this.cdr.detectChanges();
+//           },
+//           error: (error) => {
+//             fileUpload.error = 'Upload failed';
+//             fileUpload.status = 'error';
+//             this.cdr.detectChanges();
+//           },
+//         });
+//       } else {
+//         fileUpload.error = 'Please select a file and type for upload.';
+//         this.cdr.detectChanges();
+//       }
+//     });
+//   } else {
+//     console.error('Please ensure all files are selected before submitting.');
+//   }
+// }
 onSubmit() {
-
-  if (this.allFilesChosen()) {
-    if (!this.authService.getEncodedCredentials()) {
-      console.error("Authentication credentials not available. Please log in again.");
-      // Optionally redirect to login or show a message prompting re-login
-      return;
-    }
-    const filesToUpload = this.fileUploads.map(fu => fu.file).filter(file => file !== null);
-
-    filesToUpload.forEach(file => {
-      if (file) { // This check is to satisfy TypeScript's type checking
-        this.fileUploadService.uploadFile(file).subscribe(
-          (response: any) => {
-            console.log('Upload successful', response);
-            this.showSuccessMessage = true;
-            // Handle successful upload here, e.g., update UI or show a success message
-          },
-          (error: any) => {
-            console.error('Error during file upload:', error);
-            // Handle upload error here, e.g., show an error message
-          }
-        );
-      }
-    });
-  } else {
-    // Handle the case where not all files are chosen or some other validation fails
+  if (!this.allFilesChosen()) {
     console.error('Please ensure all files are selected before submitting.');
+    return;
   }
+
+  const uploadObservables = this.fileUploads.map(fileUpload => {
+    if (fileUpload.file && fileUpload.type) {
+      return this.fileUploadService.uploadFile(fileUpload.file).pipe(
+        tap(event => {
+          if (event.type === HttpEventType.UploadProgress) {
+            fileUpload.progress = Math.round(100 * event.loaded / event.total);
+          } else if (event.type === HttpEventType.Response) {
+            fileUpload.status = 'uploaded';
+          }
+        }),
+        catchError(error => {
+          fileUpload.error = 'Upload failed';
+          fileUpload.status = 'error';
+          return of(null); // Handle error but continue with other uploads.
+        })
+      );
+    }
+    return of(null); // Skip if no file or type is selected.
+  }).filter(obs => !!obs); // Remove nulls.
+
+  forkJoin(uploadObservables).subscribe(results => {
+    // All uploads are completed here.
+    const allUploaded = this.fileUploads.every(fu => fu.status === 'uploaded');
+    this.showSuccessMessage = allUploaded;
+    if(allUploaded) {
+      console.log('All files submitted successfully.');
+    } else {
+      console.error('Some files failed to upload.');
+    }
+    this.cdr.detectChanges();
+  });
 }
+
+
+
 displaySuccessMessage() {
   console.log('All files submitted successfully.');
   // Display success message to the user, e.g., using a toast or modal

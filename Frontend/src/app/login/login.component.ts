@@ -1,12 +1,15 @@
-import { Component } from '@angular/core';
+
+
 import { HttpClient, HttpHeaders } from '@angular/common/http';
+import { Component } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { HttpClientModule } from '@angular/common/http';
-import { Router } from '@angular/router'; // Import Router
+import { Router } from '@angular/router';
 import { CommonModule } from '@angular/common';
 import { HeaderComponent } from '../header/header.component';
 import { FooterComponent } from '../footer/footer.component';
 import { AuthService } from '../auth.service';
+
 
 
 @Component({
@@ -14,34 +17,44 @@ import { AuthService } from '../auth.service';
   templateUrl: './login.component.html',
   styleUrls: ['./login.component.css'],
   standalone: true,
-  imports: [FormsModule, HttpClientModule,CommonModule,HeaderComponent,FooterComponent]
+  imports: [FormsModule, CommonModule, HeaderComponent, FooterComponent]
 })
 export class LoginComponent {
   username: string = '';
   password: string = '';
-  errorMessage: string ='';
-  apiUrl: string = 'http://localhost:8080/api/login'; // URL of your Spring Boot backend
+  errorMessage: string = '';
+  isLoading: boolean = false;
 
-  constructor(private http: HttpClient, private router: Router, private authService:AuthService) { } // Inject Router in the constructor
+  constructor(private authService: AuthService, private router: Router) {}
+
+  ngOnInit() {
+    this.checkActiveSession();
+  }
+
+  checkActiveSession() {
+    this.authService.checkSession().subscribe(isActive => {
+      if (isActive) {
+        this.router.navigate(['/file-upload']); // User already logged in, navigate away from login page
+      }
+    });
+  }
 
   onSubmit() {
-    this.authService.setCredentials(this.username, this.password);
-    const headers = new HttpHeaders({
-      'Authorization': 'Basic ' + btoa(this.username + ':' + this.password)
-    });
-
-    this.http.get(this.apiUrl, { headers, responseType: 'text', withCredentials: true }).subscribe(
-      response => {
-        console.log('Success:', response);
-        this.authService.setCredentials(this.username, this.password);
-        // Handle successful authentication here
-        this.router.navigate(['/file-upload']); // Navigate to file upload page
+    this.isLoading = true;
+    this.authService.login(this.username, this.password).subscribe(
+      success => {
+        this.isLoading = false;
+        if (success) {
+          this.router.navigate(['/file-upload']); // Adjust this route as necessary
+        } else {
+          this.errorMessage = 'Username or password is incorrect';
+        }
       },
       error => {
-        console.error('Error:', error);
-      
-        this.errorMessage = 'Username or password is incorrect';
+        this.isLoading = false;
+        this.errorMessage = 'An error occurred during login. Please try again later.';
       }
     );
   }
 }
+

@@ -8,6 +8,8 @@
         <a class="navbar-item" (click)="onHomeClick()">Home </a>
         <a routerLink="/service" routerLinkActive="active" class="navbar-item">Service</a>
         <a routerLink="/about" routerLinkActive="active" class="navbar-item">About Us</a>
+        <button *ngIf="authService.isAuthenticated" class="btn btn-outline-danger my-2 my-sm-0" (click)="logout()">Logout</button>
+        
       </div>
     </nav>
     <div class="header-features">

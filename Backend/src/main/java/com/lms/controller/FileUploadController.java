@@ -1,56 +1,12 @@
-package com.lms.controller;
-//
-//import com.lms.service.CustomerService;
-//import com.lms.service.FileUploadService;
-//import org.springframework.beans.factory.annotation.Autowired;
-//import org.springframework.web.bind.annotation.PostMapping;
-//import org.springframework.web.bind.annotation.RequestMapping;
-//import org.springframework.web.bind.annotation.RequestParam;
-//import org.springframework.web.bind.annotation.RestController;
-//import org.springframework.web.multipart.MultipartFile;
-//import org.springframework.web.bind.annotation.*;
-//import org.springframework.web.multipart.MultipartFile;
-//
-//import org.springframework.security.core.Authentication;
-//import org.springframework.security.core.context.SecurityContextHolder;
-//
-//
-//
-//@RestController
-//@RequestMapping("/api/files")
-//public class FileUploadController {
-//
-//  private final FileUploadService fileStorageService;
-//  private final CustomerService customerService;
-//
-//  @Autowired
-//  public FileUploadController(FileUploadService fileStorageService, CustomerService customerService) {
-//    this.fileStorageService = fileStorageService;
-//    this.customerService = customerService;
-//  }
-//
-//  @PostMapping("/upload")
-//  public String uploadFile(@RequestParam("file") MultipartFile file) {
-//    Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-//    String ldapUsername = authentication.getName();
-//
-//    // Use the CustomerService to find the customerId by ldapUsername
-//    customerService.findCustomerIdByUsername(ldapUsername).ifPresent(customerId -> {
-//      String fileName = file.getOriginalFilename();
-//      String fileExtension = fileName.substring(fileName.lastIndexOf(".") + 1);
-//
-//      // Assuming your fileStorageService can handle storing file details with customerId
-//      fileStorageService.storeFile(customerId, fileName, fileExtension);
-//    });
-//
-//    return "File uploaded successfully";
-//  }
-//}
 
-import com.lms.service.CustomerService;
+package com.lms.controller;
+
 import com.lms.service.FileUploadService;
+import com.lms.service.LoginService;
+import com.lms.repository.FileStaticRefRepository;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.jdbc.core.JdbcTemplate;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -58,47 +14,50 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
+import org.springframework.web.server.ResponseStatusException;
 
-import javax.sql.DataSource;
+import java.io.IOException;
+import java.util.Optional;
 
 @RestController
 @RequestMapping("/api/files")
 public class FileUploadController {
 
-  private final FileUploadService fileStorageService;
-  private final CustomerService customerService;
-  private final JdbcTemplate jdbcTemplate;
+  private final FileUploadService fileUploadService;
+  private final LoginService loginService;
+  private final FileStaticRefRepository fileStaticRefRepository;
 
   @Autowired
-  public FileUploadController(FileUploadService fileStorageService, CustomerService customerService, DataSource dataSource) {
-    this.fileStorageService = fileStorageService;
-    this.customerService = customerService;
-    this.jdbcTemplate = new JdbcTemplate(dataSource);
+  public FileUploadController(FileUploadService fileUploadService, LoginService loginService, FileStaticRefRepository fileStaticRefRepository) {
+    this.fileUploadService = fileUploadService;
+    this.loginService = loginService;
+    this.fileStaticRefRepository = fileStaticRefRepository;
   }
-
   @PostMapping("/upload")
-  public String uploadFile(@RequestParam("file") MultipartFile file) {
+  public ResponseEntity<String> uploadFile(@RequestParam("file") MultipartFile file) {
     Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-    String ldapUsername = authentication.getName();
+    String username = authentication.getName();
 
-    // Use the CustomerService to find the customerId by ldapUsername
-    customerService.findCustomerIdByUsername(ldapUsername).ifPresent(customerId -> {
-      String fileName = file.getOriginalFilename();
-      String fileExtension = fileName.substring(fileName.lastIndexOf(".") + 1);
+    // Fetch the customer using the username
+    Long customerId = loginService.findCustomerIdByUsername(username)
+      .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Failed to find customer information."));
 
-      // Fetch FILE_ID from LMS_FILE_STATIC_REF based on FILE_EXTENSION using JdbcTemplate
-      Long fileId = getFileIdByFileExtension(fileExtension);
+    String fileName = file.getOriginalFilename();
+    String fileExtension = fileName != null ? fileName.substring(fileName.lastIndexOf(".") + 1) : "";
 
-      // Assuming your fileStorageService can handle storing file details with customerId and fileId
-      fileStorageService.storeFile(customerId,fileId, fileName, fileExtension);
-    });
+    // Fetch FILE_ID from LMS_FILE_STATIC_REF based on FILE_EXTENSION using JPA
+    Long fileId = fileStaticRefRepository.findByFileExtension(fileExtension)
+      .map(fileStaticRef -> fileStaticRef.getFileId())
+      .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "File extension not supported."));
 
-    return "File uploaded successfully";
+    try {
+      fileUploadService.storeFile(customerId, file);
+      return ResponseEntity.ok("File uploaded successfully");
+    } catch (IOException e) {
+      // Log the exception
+      e.printStackTrace();
+      return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Failed to store the file.");
+    }
   }
 
-  // Method to fetch FILE_ID from LMS_FILE_STATIC_REF based on FILE_EXTENSION
-  private Long getFileIdByFileExtension(String fileExtension) {
-    String sql = "SELECT \"FILE_ID\" FROM \"LMS_FILE_STATIC_REF\" WHERE \"FILE_EXTENSION\" = ?";
-    return jdbcTemplate.queryForObject(sql, Long.class, fileExtension);
-  }
 }

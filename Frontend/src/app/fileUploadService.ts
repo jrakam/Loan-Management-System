@@ -1,31 +1,23 @@
+
+
 import { Injectable } from '@angular/core';
-import { HttpClient, HttpHeaders } from '@angular/common/http';
+import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
-import { AuthService } from './auth.service'; // Update the import path as necessary
 
 @Injectable({
   providedIn: 'root'
 })
 export class FileUploadService {
-  private baseUrl = 'http://localhost:8080/api/files';
+  private baseUrl = 'http://localhost:8080/api/files'; // Adjust as needed
 
-  constructor(private http: HttpClient, private authService: AuthService) {}
+  constructor(private http: HttpClient) {}
 
   uploadFile(file: File): Observable<any> {
     const formData = new FormData();
     formData.append('file', file);
 
-    const encodedCredentials = this.authService.getEncodedCredentials();
-    if (!encodedCredentials) {
-      throw new Error('Authentication credentials not available');
-    }
-
-    const headers = new HttpHeaders({
-      'Authorization': `Basic ${encodedCredentials}`
-    });
-
     return this.http.post(`${this.baseUrl}/upload`, formData, {
-      headers: headers,
+      withCredentials: true, // Ensure cookies are sent with the request
       reportProgress: true,
       responseType: 'text'
     });

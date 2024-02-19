@@ -14,12 +14,18 @@
       <input type="password" id="password" [(ngModel)]="password" name="password" required>
     </div>
 
-    <!-- Error message display -->
+    
     <div *ngIf="errorMessage" class="error-message">
       {{ errorMessage }}
     </div>
 
-    <button type="submit" class="btn">Login</button>
+   <div *ngIf="isLoading" class="loading">
+  <div class="spinner"></div> <!-- Replace the text with this spinner -->
+</div>
+
+
+<button type="submit" class="btn" [disabled]="isLoading">Login</button>
+
   </form>
   <app-footer></app-footer>
 </div>
